@@ -389,16 +389,24 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [respondents, setRespondents] = useState<Respondent[]>(sampleRespondents);
   const [activeTagIds, setActiveTagIds] = useState<string[]>([]);
   
-  // Calculate filtered widgets based on active tags
+  // Recalculate filtered widgets whenever activeTagIds or widgets change
   const filteredWidgets = React.useMemo(() => {
+    // If no active tags, show all widgets
     if (activeTagIds.length === 0) {
       return widgets;
     }
     
+    // Filter widgets that have at least one of the active tags
     return widgets.filter(widget => 
       widget.tags.some(tagId => activeTagIds.includes(tagId))
     );
   }, [widgets, activeTagIds]);
+
+  // Log changes to activeTagIds for debugging
+  useEffect(() => {
+    console.log("Active tag IDs updated:", activeTagIds);
+    console.log("Filtered widgets count:", filteredWidgets.length);
+  }, [activeTagIds, filteredWidgets]);
 
   // Calculate NPS score for a survey
   const calculateNpsScore = (surveyId: string) => {
@@ -494,15 +502,21 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Toggle a tag in the filter
   const toggleTagFilter = (id: string) => {
-    setActiveTagIds(prev => 
-      prev.includes(id)
-        ? prev.filter(tagId => tagId !== id)
-        : [...prev, id]
-    );
+    console.log("Toggle tag filter called with id:", id);
+    setActiveTagIds(prev => {
+      if (prev.includes(id)) {
+        console.log("Removing tag from filters:", id);
+        return prev.filter(tagId => tagId !== id);
+      } else {
+        console.log("Adding tag to filters:", id);
+        return [...prev, id];
+      }
+    });
   };
 
   // Clear all tag filters
   const clearTagFilters = () => {
+    console.log("Clearing all tag filters");
     setActiveTagIds([]);
   };
 

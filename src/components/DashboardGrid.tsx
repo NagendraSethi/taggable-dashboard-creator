@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useDashboard, Widget } from "@/contexts/DashboardContext";
 import ChartCard from "./ChartCard";
 import MetricCard from "./MetricCard";
@@ -8,6 +8,11 @@ import StatusCard from "./StatusCard";
 
 const DashboardGrid: React.FC = () => {
   const { filteredWidgets } = useDashboard();
+
+  // Add debug logging
+  useEffect(() => {
+    console.log("DashboardGrid rendering with filtered widgets count:", filteredWidgets.length);
+  }, [filteredWidgets]);
 
   const getWidgetClasses = (widget: Widget) => {
     let classes = "animate-fade-in transition-all duration-300";

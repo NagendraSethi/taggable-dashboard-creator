@@ -47,3 +47,70 @@
 .animate-pulse-score {
   animation: pulse-score 2s ease-in-out;
 }
+
+/* Tag item styling */
+.tag-item {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition-all;
+}
+
+/* Tag colors - text and background */
+.bg-tag-blue {
+  @apply bg-blue-100;
+}
+.text-tag-blue-text {
+  @apply text-blue-700;
+}
+
+.bg-tag-green {
+  @apply bg-green-100;
+}
+.text-tag-green-text {
+  @apply text-green-700;
+}
+
+.bg-tag-purple {
+  @apply bg-purple-100;
+}
+.text-tag-purple-text {
+  @apply text-purple-700;
+}
+
+.bg-tag-orange {
+  @apply bg-orange-100;
+}
+.text-tag-orange-text {
+  @apply text-orange-700;
+}
+
+.bg-tag-pink {
+  @apply bg-pink-100;
+}
+.text-tag-pink-text {
+  @apply text-pink-700;
+}
+
+.bg-tag-cyan {
+  @apply bg-cyan-100;
+}
+.text-tag-cyan-text {
+  @apply text-cyan-700;
+}
+
+.bg-tag-red {
+  @apply bg-red-100;
+}
+.text-tag-red-text {
+  @apply text-red-700;
+}
+
+.bg-tag-yellow {
+  @apply bg-yellow-100;
+}
+.text-tag-yellow-text {
+  @apply text-yellow-700;
+}
+
+/* Hover effects */
+.tag-item:hover {
+  @apply opacity-90;
+}

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Filter } from "lucide-react";
 import { useDashboard, Tag } from "@/contexts/DashboardContext";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,11 @@ export const TagSelector: React.FC = () => {
   const { tags, activeTagIds, toggleTagFilter, clearTagFilters } = useDashboard();
   const [activeTab, setActiveTab] = useState<string>("all");
   
+  // Log changes to activeTagIds for debugging
+  useEffect(() => {
+    console.log("TagSelector - Active tag IDs:", activeTagIds);
+  }, [activeTagIds]);
+
   const filteredTags = tags.filter(tag => {
     if (activeTab === "all") return true;
     return tag.category === activeTab;
@@ -40,6 +45,12 @@ export const TagSelector: React.FC = () => {
   const surveyTags = tags.filter(tag => tag.category === "survey");
   const userTags = tags.filter(tag => tag.category === "user");
   
+  // Handler for tag click to ensure the event is properly handled
+  const handleTagClick = (tagId: string) => {
+    console.log("Tag clicked:", tagId);
+    toggleTagFilter(tagId);
+  };
+
   return (
     <div className="space-y-2">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -59,7 +70,7 @@ export const TagSelector: React.FC = () => {
                 <span>Filter</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
+            <DropdownMenuContent align="start" className="w-56 bg-background">
               {surveyTags.length > 0 && (
                 <>
                   <DropdownMenuLabel>Survey Tags</DropdownMenuLabel>
@@ -68,7 +79,7 @@ export const TagSelector: React.FC = () => {
                       <DropdownMenuItem
                         key={tag.id}
                         className="flex items-center justify-between cursor-pointer"
-                        onClick={() => toggleTagFilter(tag.id)}
+                        onClick={() => handleTagClick(tag.id)}
                       >
                         <span className="flex items-center">
                           <span
@@ -94,7 +105,7 @@ export const TagSelector: React.FC = () => {
                       <DropdownMenuItem
                         key={tag.id}
                         className="flex items-center justify-between cursor-pointer"
-                        onClick={() => toggleTagFilter(tag.id)}
+                        onClick={() => handleTagClick(tag.id)}
                       >
                         <span className="flex items-center">
                           <span
@@ -144,7 +155,7 @@ export const TagSelector: React.FC = () => {
               key={tag.id}
               tag={tag}
               active={activeTagIds.includes(tag.id)}
-              onClick={() => toggleTagFilter(tag.id)}
+              onClick={() => handleTagClick(tag.id)}
             />
           ))}
           
