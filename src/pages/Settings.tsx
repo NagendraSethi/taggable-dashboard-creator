@@ -55,13 +55,15 @@ const Settings = () => {
   const [tagDialogOpen, setTagDialogOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
   
-  // New tag form state
+  // New tag form state with added category field
   const [newTag, setNewTag] = useState<{
     name: string;
     color: TagColors;
+    category: "survey" | "user";
   }>({
     name: "",
     color: "blue",
+    category: "survey", // Default category
   });
 
   const handleAddTag = () => {
@@ -76,6 +78,7 @@ const Settings = () => {
     setNewTag({
       name: "",
       color: "blue",
+      category: "survey",
     });
     setEditingTag(null);
     setTagDialogOpen(false);
@@ -86,6 +89,7 @@ const Settings = () => {
     setNewTag({
       name: tag.name,
       color: tag.color,
+      category: tag.category,
     });
     setTagDialogOpen(true);
   };
@@ -122,7 +126,7 @@ const Settings = () => {
                   <DialogTrigger asChild>
                     <Button className="flex items-center gap-1" onClick={() => {
                       setEditingTag(null);
-                      setNewTag({ name: "", color: "blue" });
+                      setNewTag({ name: "", color: "blue", category: "survey" });
                     }}>
                       <Plus className="h-4 w-4" />
                       <span>Add Tag</span>
@@ -177,6 +181,27 @@ const Settings = () => {
                           </SelectContent>
                         </Select>
                       </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="category">Tag Category</Label>
+                        <Select 
+                          value={newTag.category}
+                          onValueChange={(value) => setNewTag({ 
+                            ...newTag, 
+                            category: value as "survey" | "user" 
+                          })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select tag category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="survey">Survey Tag</SelectItem>
+                              <SelectItem value="user">User Tag</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                     
                     <DialogFooter>
@@ -196,6 +221,7 @@ const Settings = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Tag</TableHead>
+                      <TableHead>Category</TableHead>
                       <TableHead>Used In</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -215,6 +241,9 @@ const Settings = () => {
                                 {tag.name}
                               </span>
                             </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="capitalize">{tag.category}</span>
                           </TableCell>
                           <TableCell>{widgetCount} widgets</TableCell>
                           <TableCell className="text-right">
@@ -260,7 +289,7 @@ const Settings = () => {
                     
                     {tags.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">
+                        <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
                           No tags created yet
                         </TableCell>
                       </TableRow>
