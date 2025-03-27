@@ -1,0 +1,49 @@
+
+/* NPS Score Colors */
+.nps-score-promoter {
+  @apply text-green-500;
+}
+
+.nps-score-passive {
+  @apply text-yellow-500;
+}
+
+.nps-score-detractor {
+  @apply text-red-500;
+}
+
+/* Tag categories */
+.tag-category-survey {
+  @apply border-l-4 border-blue-500;
+}
+
+.tag-category-user {
+  @apply border-l-4 border-purple-500;
+}
+
+/* NPS Score ranges on progress bar */
+.nps-range-detractor {
+  @apply bg-gradient-to-r from-red-500 to-orange-400;
+}
+
+.nps-range-passive {
+  @apply bg-gradient-to-r from-orange-400 to-yellow-400;
+}
+
+.nps-range-promoter {
+  @apply bg-gradient-to-r from-yellow-400 to-green-500;
+}
+
+/* Animation for NPS score when it updates */
+@keyframes pulse-score {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-score {
+  animation: pulse-score 2s ease-in-out;
+}

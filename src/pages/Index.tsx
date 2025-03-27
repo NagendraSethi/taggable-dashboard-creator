@@ -3,6 +3,8 @@ import { useDashboard, WidgetType } from "@/contexts/DashboardContext";
 import Navbar from "@/components/Navbar";
 import TagSelector from "@/components/TagFilter";
 import DashboardGrid from "@/components/DashboardGrid";
+import NpsOverview from "@/components/NpsOverview";
+import SurveyList from "@/components/SurveyList";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,12 +26,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
 const Index = () => {
   const { widgets, tags, addWidget } = useDashboard();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("overview");
   
   const [newWidget, setNewWidget] = useState({
     title: "",
@@ -181,9 +185,9 @@ const Index = () => {
       <main className="flex-1 container mx-auto px-4 py-6 md:px-6 animate-fade-in">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">NPS Survey Dashboard</h1>
             <p className="text-muted-foreground">
-              {widgets.length} widgets available • {tags.length} tags
+              Track and analyze customer feedback across all departments
             </p>
           </div>
           
@@ -298,10 +302,32 @@ const Index = () => {
           </Dialog>
         </div>
         
-        <div className="space-y-6">
-          <TagSelector />
-          <DashboardGrid />
-        </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="widgets">Widgets</TabsTrigger>
+            <TabsTrigger value="surveys">Surveys</TabsTrigger>
+          </TabsList>
+          
+          <div className="space-y-4">
+            <TagSelector />
+            
+            <TabsContent value="overview" className="space-y-6">
+              <NpsOverview />
+              <SurveyList />
+            </TabsContent>
+            
+            <TabsContent value="widgets">
+              <DashboardGrid />
+            </TabsContent>
+            
+            <TabsContent value="surveys">
+              <div className="space-y-6">
+                <SurveyList />
+              </div>
+            </TabsContent>
+          </div>
+        </Tabs>
       </main>
     </div>
   );
