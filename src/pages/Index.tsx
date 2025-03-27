@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { useDashboard } from "@/contexts/DashboardContext";
+import { useDashboard, WidgetType } from "@/contexts/DashboardContext";
 import Navbar from "@/components/Navbar";
 import TagSelector from "@/components/TagFilter";
 import DashboardGrid from "@/components/DashboardGrid";
@@ -32,16 +31,14 @@ const Index = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   
-  // New widget form state
   const [newWidget, setNewWidget] = useState({
     title: "",
-    type: "line" as const,
+    type: "line" as WidgetType,
     size: "md" as const,
     tags: [] as string[],
   });
 
   useEffect(() => {
-    // Simulate loading state for smooth animations
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -55,7 +52,6 @@ const Index = () => {
       return;
     }
     
-    // Create sample data based on the widget type
     let sampleData;
     
     switch (newWidget.type) {
@@ -149,7 +145,6 @@ const Index = () => {
         sampleData = {};
     }
     
-    // Add the new widget
     addWidget({
       title: newWidget.title,
       type: newWidget.type,
@@ -158,7 +153,6 @@ const Index = () => {
       data: sampleData
     });
     
-    // Reset form and close dialog
     setNewWidget({
       title: "",
       type: "line",
@@ -225,7 +219,7 @@ const Index = () => {
                     value={newWidget.type}
                     onValueChange={(value) => setNewWidget({ 
                       ...newWidget, 
-                      type: value as any 
+                      type: value as WidgetType 
                     })}
                   >
                     <SelectTrigger>
