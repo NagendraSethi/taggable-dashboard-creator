@@ -10,7 +10,7 @@ const DashboardGrid: React.FC = () => {
   const { filteredWidgets } = useDashboard();
 
   const getWidgetClasses = (widget: Widget) => {
-    let classes = "animate-fade-in transition-all duration-300 opacity-0";
+    let classes = "animate-fade-in transition-all duration-300";
     
     // Add animation delay based on index for staggered effect
     const index = filteredWidgets.findIndex(w => w.id === widget.id);
@@ -60,7 +60,7 @@ const DashboardGrid: React.FC = () => {
       
       default:
         return (
-          <div className="bg-white rounded-lg p-4 shadow">
+          <div className="bg-card rounded-lg p-4 shadow">
             <h3 className="font-medium">{widget.title}</h3>
             <p className="text-sm text-muted-foreground">Unsupported widget type</p>
           </div>
@@ -70,15 +70,21 @@ const DashboardGrid: React.FC = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-4">
-      {filteredWidgets.map((widget) => (
-        <div 
-          key={widget.id} 
-          className={getWidgetClasses(widget)}
-          style={{ animationDelay: `${filteredWidgets.indexOf(widget) * 50}ms` }}
-        >
-          {renderWidget(widget)}
+      {filteredWidgets.length > 0 ? (
+        filteredWidgets.map((widget) => (
+          <div 
+            key={widget.id} 
+            className={getWidgetClasses(widget)}
+            style={{ animationDelay: `${filteredWidgets.indexOf(widget) * 50}ms` }}
+          >
+            {renderWidget(widget)}
+          </div>
+        ))
+      ) : (
+        <div className="col-span-full text-center py-10">
+          <p className="text-muted-foreground">No widgets match the selected filters</p>
         </div>
-      ))}
+      )}
     </div>
   );
 };

@@ -201,11 +201,15 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [activeTagIds, setActiveTagIds] = useState<string[]>([]);
   
   // Calculate filtered widgets based on active tags
-  const filteredWidgets = activeTagIds.length > 0
-    ? widgets.filter(widget => 
-        widget.tags.some(tagId => activeTagIds.includes(tagId))
-      )
-    : widgets;
+  const filteredWidgets = React.useMemo(() => {
+    if (activeTagIds.length === 0) {
+      return widgets;
+    }
+    
+    return widgets.filter(widget => 
+      widget.tags.some(tagId => activeTagIds.includes(tagId))
+    );
+  }, [widgets, activeTagIds]);
 
   // Add a new widget
   const addWidget = (widget: Omit<Widget, "id">) => {

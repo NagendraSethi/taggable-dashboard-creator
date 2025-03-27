@@ -18,6 +18,7 @@ const TagItem: React.FC<{ tag: Tag; active: boolean; onClick: () => void }> = ({
         active ? "ring-2 ring-tag-" + tag.color + "-text ring-opacity-50" : ""
       }`}
       onClick={onClick}
+      type="button"
     >
       {tag.name}
     </button>
