@@ -16,20 +16,19 @@ const DashboardGrid: React.FC = () => {
   }, [filteredWidgets]);
 
   const getWidgetClasses = (widget: Widget) => {
-    let classes = "animate-fade-in transition-all duration-300";
+    let classes = "fade-in widget-card";
     
     // Add animation delay based on index for staggered effect
     const index = filteredWidgets.findIndex(w => w.id === widget.id);
     const delay = (index % 5) * 100; // 100ms increments, reset after 5 widgets
-    classes += ` animation-delay-${delay}`;
     
     // Add size-specific classes
     if (widget.size === "sm") {
-      classes += " col-span-1 row-span-1";
+      classes += " widget-size-sm";
     } else if (widget.size === "md") {
-      classes += " col-span-1 row-span-1 md:col-span-2 md:row-span-1";
+      classes += " widget-size-md";
     } else if (widget.size === "lg") {
-      classes += " col-span-1 row-span-1 md:col-span-2 md:row-span-2";
+      classes += " widget-size-lg";
     }
     
     return classes;
@@ -66,16 +65,20 @@ const DashboardGrid: React.FC = () => {
       
       default:
         return (
-          <div className="bg-card rounded-lg p-4 shadow">
-            <h3 className="font-medium">{widget.title}</h3>
-            <p className="text-sm text-muted-foreground">Unsupported widget type</p>
+          <div className="widget-card">
+            <div className="widget-card-header">
+              <h3 className="widget-card-title">{widget.title}</h3>
+            </div>
+            <div className="widget-card-content">
+              <p className="response-text">Unsupported widget type</p>
+            </div>
           </div>
         );
     }
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-4">
+    <div className="dashboard-grid">
       {filteredWidgets.length > 0 ? (
         filteredWidgets.map((widget) => (
           <div 
@@ -87,8 +90,8 @@ const DashboardGrid: React.FC = () => {
           </div>
         ))
       ) : (
-        <div className="col-span-full text-center py-10">
-          <p className="text-muted-foreground">No widgets match the selected filters</p>
+        <div className="empty-state">
+          <p className="response-text">No widgets match the selected filters</p>
         </div>
       )}
     </div>
