@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   BarChart, 
@@ -18,32 +17,35 @@ import {
   ResponsiveContainer,
   TooltipProps
 } from "recharts";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { TagsDisplay } from "./MetricCard";
 import { useDashboard, Widget } from "@/contexts/DashboardContext";
+import "../styles/charts.css";
 
 interface ChartCardProps {
   id: string;
   className?: string;
+  onDelete?: () => void;
 }
 
 // Custom tooltip component with clean styling
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     return (
-      <div className="custom-tooltip bg-white p-3 rounded-md shadow-lg border border-border text-sm">
-        <p className="font-medium mb-1">{label}</p>
+      <div className="custom-tooltip">
+        <p className="custom-tooltip-label">{label}</p>
         {payload.map((entry, index) => (
-          <div key={`tooltip-${index}`} className="flex items-center space-x-2">
+          <div key={`tooltip-${index}`} className="custom-tooltip-item">
             <div 
-              className="w-2 h-2 rounded-full" 
+              className="custom-tooltip-color" 
               style={{ backgroundColor: entry.color }}
             />
             <span>{entry.name}: {entry.value}</span>
@@ -68,7 +70,7 @@ const CustomActiveDot = (props: any) => {
         stroke={stroke} 
         strokeWidth={strokeWidth} 
         fill="white" 
-        className="drop-shadow-sm"
+        className="custom-active-dot-outer"
       />
       <circle 
         cx={cx} 
@@ -84,8 +86,8 @@ const CustomActiveDot = (props: any) => {
 // Create palette for the pie chart
 const COLORS = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899', '#06B6D4', '#EF4444', '#F97316'];
 
-const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
-  const { widgets } = useDashboard();
+const ChartCard: React.FC<ChartCardProps> = ({ id, className = "", onDelete }) => {
+  const { widgets, removeWidget } = useDashboard();
   const widget = widgets.find(w => w.id === id) as Widget;
   const { title, type, tags: tagIds, data } = widget;
 
@@ -154,6 +156,13 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
     return chartData;
   };
 
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this widget?")) {
+      removeWidget(id);
+      if (onDelete) onDelete();
+    }
+  };
+
   // Function to render the appropriate chart based on type
   const renderChart = () => {
     const chartData = transformData();
@@ -165,19 +174,22 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
             <LineChart
               data={chartData}
               margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+              className="chart-container"
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} className="chart-grid" />
               <XAxis 
                 dataKey="name" 
                 tick={{ fontSize: 12 }} 
                 tickLine={false} 
-                axisLine={{ stroke: '#eaeaea' }}
+                axisLine={{ stroke: 'var(--chart-axis-color)' }}
+                className="chart-axis"
               />
               <YAxis 
                 tick={{ fontSize: 12 }} 
                 tickLine={false} 
                 axisLine={false}
                 width={35}
+                className="chart-axis"
               />
               <Tooltip content={<CustomTooltip />} />
               {data.datasets.map((dataset: any, index: number) => (
@@ -189,6 +201,9 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
                   strokeWidth={2}
                   dot={false}
                   activeDot={<CustomActiveDot />}
+                  className="chart-line"
+                  animationDuration={1500}
+                  animationEasing="ease-in-out"
                 />
               ))}
             </LineChart>
@@ -201,19 +216,22 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
             <BarChart
               data={chartData}
               margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+              className="chart-container"
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} className="chart-grid" />
               <XAxis 
                 dataKey="name" 
                 tick={{ fontSize: 12 }} 
                 tickLine={false} 
-                axisLine={{ stroke: '#eaeaea' }}
+                axisLine={{ stroke: 'var(--chart-axis-color)' }}
+                className="chart-axis"
               />
               <YAxis 
                 tick={{ fontSize: 12 }} 
                 tickLine={false} 
                 axisLine={false}
                 width={35}
+                className="chart-axis"
               />
               <Tooltip content={<CustomTooltip />} />
               {data.datasets.map((dataset: any, index: number) => (
@@ -222,6 +240,9 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
                   dataKey={dataset.label || `dataset${index}`}
                   fill={dataset.backgroundColor || COLORS[index % COLORS.length]}
                   radius={[4, 4, 0, 0]}
+                  className="chart-bar"
+                  animationDuration={1500}
+                  animationEasing="ease-in-out"
                 />
               ))}
             </BarChart>
@@ -234,6 +255,7 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
             <AreaChart
               data={chartData}
               margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+              className="chart-container"
             >
               <defs>
                 {data.datasets.map((dataset: any, index: number) => (
@@ -255,18 +277,20 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
                   </linearGradient>
                 ))}
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} className="chart-grid" />
               <XAxis 
                 dataKey="name" 
                 tick={{ fontSize: 12 }} 
                 tickLine={false} 
-                axisLine={{ stroke: '#eaeaea' }}
+                axisLine={{ stroke: 'var(--chart-axis-color)' }}
+                className="chart-axis"
               />
               <YAxis 
                 tick={{ fontSize: 12 }} 
                 tickLine={false}
                 axisLine={false}
                 width={35}
+                className="chart-axis"
               />
               <Tooltip content={<CustomTooltip />} />
               {data.datasets.map((dataset: any, index: number) => (
@@ -277,6 +301,9 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
                   stroke={dataset.borderColor || COLORS[index % COLORS.length]}
                   fillOpacity={1}
                   fill={`url(#colorGradient${index})`}
+                  className="chart-area"
+                  animationDuration={1500}
+                  animationEasing="ease-in-out"
                 />
               ))}
             </AreaChart>
@@ -286,7 +313,7 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
       case "pie":
         return (
           <ResponsiveContainer width="100%" height={220}>
-            <PieChart>
+            <PieChart className="chart-container">
               <Pie
                 data={data.datasets[0].data.map((value: number, index: number) => ({
                   name: data.labels[index],
@@ -299,6 +326,9 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
                 innerRadius={30}
                 fill="#8884d8"
                 dataKey="value"
+                className="chart-pie"
+                animationDuration={1500}
+                animationEasing="ease-in-out"
               >
                 {data.datasets[0].data.map((_: any, index: number) => (
                   <Cell 
@@ -314,8 +344,9 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
                 align="center"
                 iconSize={8}
                 iconType="circle"
+                className="chart-legend"
                 formatter={(value) => (
-                  <span className="text-xs">{value}</span>
+                  <span className="chart-legend-label">{value}</span>
                 )}
               />
             </PieChart>
@@ -328,44 +359,52 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "" }) => {
   };
 
   return (
-    <Card className={`overflow-hidden relative ${className}`}>
-      <CardHeader className="pb-0">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-medium">{title}</CardTitle>
+    <Card className={`chart-card ${className}`}>
+      <CardHeader className="chart-card-header">
+        <div className="chart-card-title-row">
+          <CardTitle className="chart-card-title">{title}</CardTitle>
           
           <DropdownMenu>
-            <DropdownMenuTrigger className="outline-none">
-              <div className="p-1 rounded-md hover:bg-secondary transition-colors">
-                <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+            <DropdownMenuTrigger className="chart-card-menu-trigger">
+              <div className="chart-card-menu-button">
+                <MoreHorizontal className="chart-card-menu-icon" />
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="chart-card-menu-content">
               <DropdownMenuItem 
                 onClick={() => setTimeRange("week")}
-                className={timeRange === "week" ? "bg-secondary/50" : ""}
+                className={timeRange === "week" ? "chart-card-menu-item-active" : ""}
               >
                 Last Week
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => setTimeRange("month")}
-                className={timeRange === "month" ? "bg-secondary/50" : ""}
+                className={timeRange === "month" ? "chart-card-menu-item-active" : ""}
               >
                 Last Month
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => setTimeRange("all")}
-                className={timeRange === "all" ? "bg-secondary/50" : ""}
+                className={timeRange === "all" ? "chart-card-menu-item-active" : ""}
               >
                 All Time
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={handleDelete}
+                className="chart-card-menu-item-delete"
+              >
+                <Trash2 className="chart-card-delete-icon" />
+                Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent className="pt-4">
+      <CardContent className="chart-card-content">
         {renderChart()}
         
-        <div className="mt-2">
+        <div className="chart-card-tags">
           <TagsDisplay tagIds={tagIds} />
         </div>
       </CardContent>

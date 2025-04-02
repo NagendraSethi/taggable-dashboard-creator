@@ -5,9 +5,10 @@ import ChartCard from "./ChartCard";
 import MetricCard from "./MetricCard";
 import TableCard from "./TableCard";
 import StatusCard from "./StatusCard";
+import "../styles/dashboard.css"; // We'll create this file for custom styling
 
 const DashboardGrid: React.FC = () => {
-  const { filteredWidgets } = useDashboard();
+  const { filteredWidgets, removeWidget } = useDashboard();
 
   // Add debug logging
   useEffect(() => {
@@ -16,11 +17,7 @@ const DashboardGrid: React.FC = () => {
   }, [filteredWidgets]);
 
   const getWidgetClasses = (widget: Widget) => {
-    let classes = "fade-in widget-card";
-    
-    // Add animation delay based on index for staggered effect
-    const index = filteredWidgets.findIndex(w => w.id === widget.id);
-    const delay = (index % 5) * 100; // 100ms increments, reset after 5 widgets
+    let classes = "widget-card";
     
     // Add size-specific classes
     if (widget.size === "sm") {
@@ -42,7 +39,7 @@ const DashboardGrid: React.FC = () => {
       case "bar":
       case "pie":
       case "area":
-        return <ChartCard id={id} className="h-full" />;
+        return <ChartCard id={id} onDelete={() => handleDeleteWidget(id)} className="h-full" />;
       
       case "metric":
         return (
@@ -65,7 +62,7 @@ const DashboardGrid: React.FC = () => {
       
       default:
         return (
-          <div className="widget-card">
+          <div className="widget-card-default">
             <div className="widget-card-header">
               <h3 className="widget-card-title">{widget.title}</h3>
             </div>
@@ -77,14 +74,20 @@ const DashboardGrid: React.FC = () => {
     }
   };
 
+  const handleDeleteWidget = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this widget?")) {
+      removeWidget(id);
+    }
+  };
+
   return (
     <div className="dashboard-grid">
       {filteredWidgets.length > 0 ? (
-        filteredWidgets.map((widget) => (
+        filteredWidgets.map((widget, index) => (
           <div 
             key={widget.id} 
             className={getWidgetClasses(widget)}
-            style={{ animationDelay: `${filteredWidgets.indexOf(widget) * 50}ms` }}
+            style={{ animationDelay: `${index * 50}ms` }}
           >
             {renderWidget(widget)}
           </div>
