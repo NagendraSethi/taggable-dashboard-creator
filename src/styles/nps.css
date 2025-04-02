@@ -50,7 +50,7 @@
 
 /* Tag item styling */
 .tag-item {
-  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition-all;
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition-all hover:opacity-90;
 }
 
 /* Tag colors - text and background */
@@ -110,7 +110,32 @@
   @apply text-yellow-700;
 }
 
-/* Hover effects */
-.tag-item:hover {
-  @apply opacity-90;
+/* Survey data related styles */
+.survey-response-item {
+  @apply border-l-4 border-primary p-4 mb-4 rounded-r-md bg-card;
+}
+
+.response-text {
+  @apply text-sm text-muted-foreground mt-1;
+}
+
+.response-rating {
+  @apply flex items-center space-x-1 text-yellow-500;
+}
+
+.response-checkbox-list {
+  @apply flex flex-wrap gap-2 mt-1;
+}
+
+.response-checkbox-item {
+  @apply bg-muted text-xs px-2 py-1 rounded-full;
+}
+
+/* Survey metadata */
+.survey-metadata {
+  @apply text-xs text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 mt-2;
+}
+
+.survey-metadata-item {
+  @apply flex items-center gap-1;
 }

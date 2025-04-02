@@ -12,6 +12,7 @@ const DashboardGrid: React.FC = () => {
   // Add debug logging
   useEffect(() => {
     console.log("DashboardGrid rendering with filtered widgets count:", filteredWidgets.length);
+    console.log("Widget tags:", filteredWidgets.map(w => w.tags));
   }, [filteredWidgets]);
 
   const getWidgetClasses = (widget: Widget) => {

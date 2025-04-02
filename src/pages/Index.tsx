@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useDashboard, WidgetType } from "@/contexts/DashboardContext";
 import Navbar from "@/components/Navbar";
@@ -27,6 +28,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel 
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -50,9 +60,34 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Handle checkbox change for multiple tag selection
+  const handleTagCheckboxChange = (tagId: string) => {
+    setNewWidget(prev => {
+      const newTags = [...prev.tags];
+      if (newTags.includes(tagId)) {
+        // Remove tag if already selected
+        return {
+          ...prev,
+          tags: newTags.filter(id => id !== tagId)
+        };
+      } else {
+        // Add tag if not selected
+        return {
+          ...prev,
+          tags: [...newTags, tagId]
+        };
+      }
+    });
+  };
+
   const handleAddWidget = () => {
     if (!newWidget.title) {
       toast.error("Please provide a widget title");
+      return;
+    }
+    
+    if (newWidget.tags.length === 0) {
+      toast.error("Please select at least one tag");
       return;
     }
     
@@ -266,27 +301,24 @@ const Index = () => {
                 </div>
                 
                 <div className="grid gap-2">
-                  <Label htmlFor="tags">Tags</Label>
-                  <Select 
-                    value={newWidget.tags.length ? newWidget.tags[0] : undefined}
-                    onValueChange={(value) => setNewWidget({ 
-                      ...newWidget, 
-                      tags: [value] 
-                    })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a tag" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {tags.map((tag) => (
-                          <SelectItem key={tag.id} value={tag.id}>
-                            {tag.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                  <Label>Tags (select multiple)</Label>
+                  <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 border rounded-md">
+                    {tags.map((tag) => (
+                      <div key={tag.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`tag-${tag.id}`}
+                          checked={newWidget.tags.includes(tag.id)}
+                          onCheckedChange={() => handleTagCheckboxChange(tag.id)}
+                        />
+                        <Label 
+                          htmlFor={`tag-${tag.id}`}
+                          className={`text-sm cursor-pointer tag-item bg-tag-${tag.color} text-tag-${tag.color}-text`}
+                        >
+                          {tag.name}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
               

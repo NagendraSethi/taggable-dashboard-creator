@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -47,6 +46,9 @@ export interface Survey {
   tags: string[]; // Survey Tag IDs
   responses: SurveyResponse[];
   npsScore?: number;
+  survey_owner?: string;
+  start_date?: string;
+  end_date?: string;
 }
 
 export interface SurveyResponse {
@@ -56,6 +58,12 @@ export interface SurveyResponse {
   feedback?: string;
   respondentId: string;
   createdAt: string;
+  text_responses?: Record<string, string>;
+  radio_responses?: Record<string, string>;
+  checkbox_responses?: Record<string, string[]>;
+  textarea_responses?: Record<string, string>;
+  rating_responses?: Record<string, number>;
+  likert_responses?: Record<string, number>;
 }
 
 export interface Respondent {
@@ -139,7 +147,7 @@ const sampleRespondents: Respondent[] = [
   }
 ];
 
-// Sample surveys with responses
+// Update sample surveys to include new fields
 const sampleSurveys: Survey[] = [
   {
     id: "survey-1",
@@ -154,7 +162,11 @@ const sampleSurveys: Survey[] = [
         score: 9,
         feedback: "Great service, very satisfied",
         respondentId: "respondent-1",
-        createdAt: "2023-03-16"
+        createdAt: "2023-03-16",
+        text_responses: { "improvement": "None" },
+        radio_responses: { "contact_preference": "email" },
+        checkbox_responses: { "services_used": ["support", "consulting"] },
+        rating_responses: { "ease_of_use": 5 },
       },
       {
         id: "response-2",
@@ -173,7 +185,10 @@ const sampleSurveys: Survey[] = [
         createdAt: "2023-03-18"
       }
     ],
-    npsScore: 33 // (1 promoter - 1 detractor) / 3 * 100
+    npsScore: 33, // (1 promoter - 1 detractor) / 3 * 100
+    survey_owner: "Jane Smith",
+    start_date: "2023-03-01",
+    end_date: "2023-03-31"
   },
   {
     id: "survey-2",
@@ -389,7 +404,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [respondents, setRespondents] = useState<Respondent[]>(sampleRespondents);
   const [activeTagIds, setActiveTagIds] = useState<string[]>([]);
   
-  // Recalculate filtered widgets whenever activeTagIds or widgets change
+  // Improved filtering logic for handling multiple tags
   const filteredWidgets = React.useMemo(() => {
     // If no active tags, show all widgets
     if (activeTagIds.length === 0) {
