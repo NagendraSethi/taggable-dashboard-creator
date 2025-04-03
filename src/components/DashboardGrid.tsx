@@ -16,6 +16,10 @@ const DashboardGrid: React.FC = () => {
     console.log("Widget tags:", filteredWidgets.map(w => w.tags));
   }, [filteredWidgets]);
 
+  // Group widgets by type for organizing in the grid
+  const metricWidgets = filteredWidgets.filter(w => w.type === "metric");
+  const otherWidgets = filteredWidgets.filter(w => w.type !== "metric");
+
   const getWidgetClasses = (widget: Widget) => {
     let classes = "widget-card";
     
@@ -81,22 +85,46 @@ const DashboardGrid: React.FC = () => {
   };
 
   return (
-    <div className="dashboard-grid">
-      {filteredWidgets.length > 0 ? (
-        filteredWidgets.map((widget, index) => (
-          <div 
-            key={widget.id} 
-            className={getWidgetClasses(widget)}
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
-            {renderWidget(widget)}
-          </div>
-        ))
-      ) : (
-        <div className="empty-state">
-          <p className="response-text">No widgets match the selected filters</p>
+    <div className="space-y-6">
+      {metricWidgets.length > 0 && (
+        <div className="dashboard-overview">
+          {metricWidgets.map((widget, index) => (
+            <div 
+              key={widget.id} 
+              className={getWidgetClasses(widget)}
+              style={{ 
+                animationDelay: `${index * 50}ms`,
+                visibility: 'visible' 
+              }}
+            >
+              {renderWidget(widget)}
+            </div>
+          ))}
         </div>
       )}
+      
+      <div className="dashboard-grid">
+        {otherWidgets.length > 0 ? (
+          otherWidgets.map((widget, index) => (
+            <div 
+              key={widget.id} 
+              className={getWidgetClasses(widget)}
+              style={{ 
+                animationDelay: `${index * 50}ms`,
+                visibility: 'visible' 
+              }}
+            >
+              {renderWidget(widget)}
+            </div>
+          ))
+        ) : (
+          metricWidgets.length === 0 && (
+            <div className="empty-state">
+              <p className="response-text">No widgets match the selected filters</p>
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 };

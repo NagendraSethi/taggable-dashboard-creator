@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   BarChart, 
@@ -86,6 +87,27 @@ const CustomActiveDot = (props: any) => {
 // Create palette for the pie chart
 const COLORS = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899', '#06B6D4', '#EF4444', '#F97316'];
 
+// Custom pie chart label
+const renderCustomizedPieLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }: any) => {
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.6;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text 
+      x={x} 
+      y={y} 
+      fill="white" 
+      textAnchor="middle" 
+      dominantBaseline="central"
+      className="recharts-pie-label-text"
+    >
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+};
+
 const ChartCard: React.FC<ChartCardProps> = ({ id, className = "", onDelete }) => {
   const { widgets, removeWidget } = useDashboard();
   const widget = widgets.find(w => w.id === id) as Widget;
@@ -138,7 +160,16 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "", onDelete }) =
     
     const chartData = getFilteredData();
     
-    if (type === "pie") return chartData;
+    if (type === "pie") {
+      // Transform pie data to the correct format
+      if (chartData.labels && chartData.datasets && chartData.datasets[0]) {
+        return chartData.labels.map((label, i) => ({
+          name: label,
+          value: chartData.datasets[0].data[i] || 0
+        }));
+      }
+      return [];
+    }
     
     // For line, area, bar charts convert to recharts format
     if (chartData.labels && chartData.datasets) {
@@ -315,25 +346,23 @@ const ChartCard: React.FC<ChartCardProps> = ({ id, className = "", onDelete }) =
           <ResponsiveContainer width="100%" height={220}>
             <PieChart className="chart-container">
               <Pie
-                data={data.datasets[0].data.map((value: number, index: number) => ({
-                  name: data.labels[index],
-                  value
-                }))}
+                data={chartData}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
+                label={renderCustomizedPieLabel}
                 outerRadius={80}
-                innerRadius={30}
+                innerRadius={40}
                 fill="#8884d8"
                 dataKey="value"
                 className="chart-pie"
                 animationDuration={1500}
                 animationEasing="ease-in-out"
               >
-                {data.datasets[0].data.map((_: any, index: number) => (
+                {chartData.map((_: any, index: number) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={data.datasets[0].backgroundColor[index] || COLORS[index % COLORS.length]} 
+                    fill={data.datasets[0]?.backgroundColor[index] || COLORS[index % COLORS.length]} 
                   />
                 ))}
               </Pie>

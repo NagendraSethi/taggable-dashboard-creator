@@ -1,3 +1,4 @@
+
 /* Dashboard Layout */
 .dashboard-grid {
   display: grid;
@@ -60,6 +61,15 @@
   grid-column: span 2;
 }
 
+/* Cards at top */
+.dashboard-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
 /* Tag Colors */
 .bg-tag-blue {
   background-color: rgba(59, 130, 246, 0.15);
@@ -108,6 +118,24 @@
 }
 .text-tag-red-text {
   color: rgb(220, 38, 38);
+}
+
+/* Pie Chart Specific Styles */
+.chart-pie {
+  margin: 1rem auto;
+}
+
+.recharts-pie-label-text {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.recharts-legend-wrapper {
+  bottom: 0 !important;
+}
+
+.recharts-pie-labels {
+  pointer-events: none;
 }
 
 /* Animations */
