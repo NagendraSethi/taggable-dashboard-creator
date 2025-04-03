@@ -1,10 +1,11 @@
-
 /* Dashboard Layout */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
   padding: 1rem;
+  width: 100%;
+  visibility: visible !important;
 }
 
 /* Widget Card Styles */
@@ -17,6 +18,7 @@
   animation: fadeIn 0.5s ease forwards;
   opacity: 0;
   height: 100%;
+  visibility: visible;
 }
 
 .widget-card:hover {
@@ -130,6 +132,7 @@
   background-color: rgba(0, 0, 0, 0.02);
   border-radius: 0.5rem;
   text-align: center;
+  visibility: visible;
 }
 
 .response-text {
@@ -144,4 +147,11 @@
 
 .chart-card:hover .recharts-wrapper {
   transform: scale(1.02);
+}
+
+/* Dropdown menu styling fixes */
+.dropdown-menu-content {
+  z-index: 50;
+  background-color: white !important;
+  visibility: visible !important;
 }

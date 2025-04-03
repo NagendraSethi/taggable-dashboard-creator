@@ -8,6 +8,11 @@ import { DashboardProvider } from "@/contexts/DashboardContext";
 import Index from "./pages/Index";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import "./styles/dashboard.css";
+
+// We need to ensure App.css doesn't override our core styling
+import "./index.css";
+import "./App.css";
 
 const queryClient = new QueryClient();
 
@@ -18,11 +23,13 @@ const App = () => (
         <Toaster />
         <Sonner position="top-right" closeButton />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div className="app-container min-h-screen bg-background">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
         </BrowserRouter>
       </DashboardProvider>
     </TooltipProvider>

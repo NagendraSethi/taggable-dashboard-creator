@@ -5,7 +5,6 @@ import ChartCard from "./ChartCard";
 import MetricCard from "./MetricCard";
 import TableCard from "./TableCard";
 import StatusCard from "./StatusCard";
-import "../styles/dashboard.css"; // We'll create this file for custom styling
 
 const DashboardGrid = () => {
   const { filteredWidgets, removeWidget } = useDashboard();
@@ -80,14 +79,19 @@ const DashboardGrid = () => {
     }
   };
 
+  console.log("Rendering dashboard grid with", filteredWidgets.length, "widgets");
+
   return (
-    <div className="dashboard-grid">
+    <div className="dashboard-grid" style={{ visibility: 'visible' }}>
       {filteredWidgets.length > 0 ? (
         filteredWidgets.map((widget, index) => (
           <div 
             key={widget.id} 
             className={getWidgetClasses(widget)}
-            style={{ animationDelay: `${index * 50}ms` }}
+            style={{ 
+              animationDelay: `${index * 50}ms`,
+              visibility: 'visible' 
+            }}
           >
             {renderWidget(widget)}
           </div>
